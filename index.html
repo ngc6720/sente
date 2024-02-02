@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sente | wave terrain synthesis</title>
+    <meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link
+      rel="shortcut icon"
+      href="data:image/svg+xml, %3Csvg width='24' height='24' stroke='grey' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 13C7.34968 13.7449 9.40741 2 16.8148 2M3 18C10.0747 17.8037 13.8519 6 21.2593 6M10 21C15.1852 21 17.5059 9.77425 21.2593 11.5' stroke-width='2'/%3E%3C/svg%3E"
+    >
+    <script type="module" crossorigin src="/sente/assets/index-koPDLfRV.js"></script>
+    <link rel="stylesheet" crossorigin href="/sente/assets/index-rJ57SV3k.css">
+  </head>
+  <body>
+    <noscript>
+      <p>Sorry, this website needs javascript to work.</p>
+    </noscript>
+
+    <div id="three"></div> 
+    
+    <div id="box" class="hidden">
+
+      <div class="main-controls">
+        
+        <button id='gen' class="big-button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 13C7.34968 13.7449 9.40741 2 16.8148 2M3 18C10.0747 17.8037 13.8519 6 21.2593 6M10 21C15.1852 21 17.5059 9.77425 21.2593 11.5" stroke-width="2"/>
+          </svg>
+          </button>
+        <div class='master'>
+          <button id="toggle" class="big-button">IO
+          </button>
+
+          <div class="control">
+            <label for="masterGain">volume</label>
+            <input
+              type="range"
+              class="ctrl"
+              id="masterGain"
+              name="masterGain"
+              min="0.0"
+              max="1.0"
+              step="0.001"
+              value="0.75"
+            />
+          </div>
+
+        </div>
+
+        <label id='label-color-theme' for="color-theme">
+          DARK
+        </label>
+        <input style="display: none;" type="checkbox" id="color-theme">
+
+      </div>
+
+      <div id="main-controls2">
+
+        <div class="edges-container">
+          <label>Edges
+            <select class="ctrl" name="pets" id="edges">
+              <option value="1">SIGM</option>
+              <option value="2">CLIP</option>
+              <option value="3">WRAP</option>
+              <option value="4">FOLD</option>
+            </select>
+          </label>
+          <div class="label-edges">
+            <div class="line"></div>
+            shape
+            <div class="line"></div>
+          </div>
+          <div class="edges-buttons">
+            <button class="edges-button">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 14V10C3 6.13401 6.13401 3 10 3H14C17.866 3 21 6.13401 21 10V14C21 17.866 17.866 21 14 21H10C6.13401 21 3 17.866 3 14Z" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="edges-button">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 21V3H21V21H3Z" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="edges-button">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <mask id="path-1-inside-1_245_5" fill="white">
+                <path d="M15 22C13 20 11 20 9 22C5 22 2 20 2 15C4 13 4 11 2 9C2 5 5 2 9 2C11 4 13 4 15 2C20 2 22 5 22 9C20 11 20 13 22 15C22 20 20 22 15 22Z"/>
+                </mask>
+                <path d="M8 2V9H10V2H8ZM8 9V15H10V9H8ZM8 15V22H10V15H8ZM16 22V15H14V22H16ZM16 15V9H14V15H16ZM16 9V2H14V9H16ZM22 8H15V10H22V8ZM15 8H9V10H15V8ZM9 8H2V10H9V8ZM2 16H9V14H2V16ZM9 16H15V14H9V16ZM15 16H22V14H15V16ZM9 2L10.4142 0.585786L9.82843 0H9V2ZM9 22V24H9.82843L10.4142 23.4142L9 22ZM15 22L13.5858 23.4142L14.1716 24H15V22ZM15 2V0H14.1716L13.5858 0.585785L15 2ZM22 9L23.4142 10.4142L24 9.82843V9H22ZM2 9H0V9.82843L0.585786 10.4142L2 9ZM2 15L0.585786 13.5858L0 14.1716V15H2ZM22 15L24 15L24 14.1716L23.4142 13.5858L22 15ZM10.4142 23.4142C11.1962 22.6322 11.7175 22.5 12 22.5C12.2825 22.5 12.8038 22.6322 13.5858 23.4142L16.4142 20.5858C15.1962 19.3678 13.7175 18.5 12 18.5C10.2825 18.5 8.80378 19.3678 7.58579 20.5858L10.4142 23.4142ZM15 4C17.0892 4 18.2359 4.61295 18.8884 5.33793C19.575 6.1008 20 7.30474 20 9H24C24 6.69526 23.425 4.3992 21.8616 2.66207C20.2641 0.887053 17.9108 0 15 0V4ZM0.585786 10.4142C1.36779 11.1962 1.5 11.7175 1.5 12C1.5 12.2825 1.36779 12.8038 0.585786 13.5858L3.41421 16.4142C4.63221 15.1962 5.5 13.7175 5.5 12C5.5 10.2825 4.63221 8.80378 3.41421 7.58579L0.585786 10.4142ZM23.4142 13.5858C22.6322 12.8038 22.5 12.2825 22.5 12C22.5 11.7175 22.6322 11.1962 23.4142 10.4142L20.5858 7.58579C19.3678 8.80378 18.5 10.2825 18.5 12C18.5 13.7175 19.3678 15.1962 20.5858 16.4142L23.4142 13.5858ZM4 9C4 6.10457 6.10457 4 9 4V0C3.89543 0 0 3.89543 0 9H4ZM15 24C17.6973 24 20.1056 23.4728 21.7892 21.7892C23.4728 20.1056 24 17.6973 24 15L20 15C20 17.3027 19.5272 18.3944 18.9608 18.9608C18.3944 19.5272 17.3027 20 15 20V24ZM0 15C0 17.9108 0.887053 20.2641 2.66207 21.8616C4.39919 23.425 6.69526 24 9 24V20C7.30474 20 6.10081 19.575 5.33793 18.8884C4.61295 18.2359 4 17.0892 4 15H0ZM7.58579 3.41421C8.80378 4.63221 10.2825 5.5 12 5.5C13.7175 5.5 15.1962 4.63221 16.4142 3.41421L13.5858 0.585785C12.8038 1.36779 12.2825 1.5 12 1.5C11.7175 1.5 11.1962 1.36779 10.4142 0.585786L7.58579 3.41421Z"  mask="url(#path-1-inside-1_245_5)"/>
+              </svg>
+            </button>
+            <button class="edges-button">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.9441 5.94413L18.0559 3.05587C17.5526 2.55256 16.7024 2.72252 16.4747 3.39689C14.6751 8.72515 14.6751 15.2749 16.4747 20.6031C16.7024 21.2775 17.5526 21.4474 18.0559 20.9441L20.9441 18.0559C21.4474 17.5526 21.2775 16.7024 20.6031 16.4747C15.2749 14.6751 8.72515 14.6751 3.39689 16.4747C2.72252 16.7024 2.55256 17.5526 3.05587 18.0559L5.94413 20.9441C6.44744 21.4474 7.29757 21.2775 7.52532 20.6031C9.32489 15.2749 9.32489 8.72515 7.52532 3.39689C7.29757 2.72252 6.44744 2.55256 5.94413 3.05587L3.04403 5.95597C2.54388 6.45612 2.70808 7.30037 3.37647 7.53178C8.67552 9.36643 15.2655 9.33278 20.6033 7.5258C21.2775 7.29756 21.4474 6.44744 20.9441 5.94413Z" stroke-width="2"/>
+              </svg>
+            </button>
+            <div id="edges-button-selection" class="sigm"></div>
+          </div>
+        </div>
+  
+        <div id="voices-container">
+  
+          <div id="voices-slider">
+  
+            <input
+              type="range"
+              class="ctrl"
+              id="voices"
+              name="voices"
+              min="1"
+              max="8"
+              step="1"
+              value="5"
+            />
+  
+            <div class="label-voices">
+              <div class="line"></div>
+              voices
+              <div class="line"></div>
+            </div>
+            
+          </div>
+  
+          <div class="control">
+            <label>detune</label>
+            <input
+              type="range"
+              class="ctrl"
+              id="detune"
+              name="detune"
+              min="0"
+              max="1"
+              step="0.00001"
+              value="0.1"
+            />
+          </div>
+  
+        </div>
+
+      </div>
+
+        <div class="slider-card-box-container">
+          <button class="orbiter-button">A<div class="line"></div></button>
+          <button class="orbiter-button off">B<div class="line"></div></button>
+
+          <div class="slider-card-box">
+    
+            <div class="slider-card">
+      
+              <label for="orbit1">orbit</label>
+              <div class="sliders">
+      
+                <div class="slider-card-1">
+          
+                  <input
+                    type="range"
+                    class="ctrl"
+                    id="orbit1"
+                    name="orbit1"
+                    min="0"
+                    max="2000"
+                    step="0.00001"
+                    value="1000"
+                  />
+            
+                  <input
+                    type="range"
+                    class="ctrl"
+                    id="orbitDeviationF1"
+                    name="orbitDeviationF1"
+                    min="0"
+                    max="2000"
+                    step="0.00001"
+                    value="0"
+                  />
+                  
+                </div>
+      
+                <input
+                  type="range"
+                  class="ctrl"
+                  id="orbitDeviationQt1"
+                  name="orbitDeviationQt1"
+                  min="0"
+                  max="800"
+                  step="0.00001"
+                  value="0"
+                />
+                
+              </div>
+      
+              <div class="slider-labels">
+                <label for="orbitDeviationF1">mod<br>frequency</label>
+                <label for="orbitDeviationQt1">mod<br>amt</label>
+      
+              </div>
+              
+            </div>
+      
+            <div class="line"></div>
+
+            <div class="slider-card">
+      
+              <label for="radius1">radius</label>
+              <div class="sliders">
+      
+                <div class="slider-card-1">
+          
+                  <input
+                    type="range"
+                    class="ctrl"
+                    id="radius1"
+                    name="radius1"
+                    min="0.0001"
+                    max="4"
+                    step="0.00001"
+                    value="1.1"
+                  />
+            
+                  <input
+                  type="range"
+                  class="ctrl"
+                  id="radiusDeviationF1"
+                  name="radiusDeviationF1"
+                  min="0"
+                  max="2000"
+                  step="0.00001"
+                  value="0"
+                />
+                  
+                </div>
+      
+                <input
+                type="range"
+                class="ctrl"
+                id="radiusDeviationQt1"
+                name="radiusDeviationQt1"
+                min="0"
+                max="4"
+                step="0.00001"
+                value="0"
+              />
+                
+              </div>
+      
+              <div class="slider-labels">
+                <label for="radiusDeviationF1">mod<br>frequency</label>
+                <label for="radiusDeviationQt1">mod<br>amt</label>
+      
+              </div>
+              
+            </div>
+    
+          </div>
+    
+          <div class="slider-card-box off">
+    
+            <div class="slider-card">
+      
+              <label for="orbit2">orbit</label>
+              <div class="sliders">
+      
+                <div class="slider-card-1">
+          
+                  <input
+                    type="range"
+                    class="ctrl"
+                    id="orbit2"
+                    name="orbit2"
+                    min="0"
+                    max="2000"
+                    step="0.00001"
+                    value="1"
+                  />
+            
+                  <input
+                    type="range"
+                    class="ctrl"
+                    id="orbitDeviationF2"
+                    name="orbitDeviationF2"
+                    min="0"
+                    max="2000"
+                    step="0.00001"
+                    value="0"
+                  />
+                  
+                </div>
+      
+                <input
+                  type="range"
+                  class="ctrl"
+                  id="orbitDeviationQt2"
+                  name="orbitDeviationQt2"
+                  min="0"
+                  max="800"
+                  step="0.00001"
+                  value="0"
+                />
+                
+              </div>
+      
+              <div class="slider-labels">
+                <label for="orbitDeviationF2">mod<br>frequency</label>
+                <label for="orbitDeviationQt2">mod<br>amt</label>
+      
+              </div>
+              
+            </div>
+      
+            <div class="line"></div>
+
+            <div class="slider-card">
+      
+              <label for="radius2">radius</label>
+              <div class="sliders">
+      
+                <div class="slider-card-1">
+          
+                  <input
+                    type="range"
+                    class="ctrl"
+                    id="radius2"
+                    name="radius2"
+                    min="0.0001"
+                    max="4"
+                    step="0.00001"
+                    value="0.1"
+                  />
+            
+                  <input
+                  type="range"
+                  class="ctrl"
+                  id="radiusDeviationF2"
+                  name="radiusDeviationF2"
+                  min="0"
+                  max="2000"
+                  step="0.00001"
+                  value="0"
+                />
+                  
+                </div>
+      
+                <input
+                type="range"
+                class="ctrl"
+                id="radiusDeviationQt2"
+                name="radiusDeviationQt2"
+                min="0"
+                max="4"
+                step="0.00001"
+                value="0"
+              />
+                
+              </div>
+      
+              <div class="slider-labels">
+                <label for="radiusDeviationF2">mod<br>frequency</label>
+                <label for="radiusDeviationQt2">mod<br>amt</label>
+      
+              </div>
+              
+            </div>
+    
+          </div>
+          
+        </div>
+
+      
+    </div>
+    <div id="info">
+      <div id="info-content">
+        
+        <div id="text">
+          <p>'SENTE'</p>
+          <p>
+            An implementation of wave terrain synthesis in the browser using audio worklets. The orbits create a path that reads sound out of a 3d surface. Each bump and hump is translated to audio samples, creating shifting soundwaves.
+          </p>
+        </div>
+        
+        <div id="keywords">
+          <span class="scrolling-text">/ Sente // wave terrain synthesis /</span>
+          <span class="scrolling-text">/ Sente // wave terrain synthesis /</span>
+        </div>
+        
+        <div id="reference">
+          The synthesis is adapted from the book Generating Sound & Organizing Time: Thinking with gen~ / Graham Wakefield & Gregory Taylor
+        </div>
+        
+      </div>
+    </div>
+
+  </body>
+</html>

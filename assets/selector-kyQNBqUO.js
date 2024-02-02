@@ -1,0 +1,1 @@
+(function(){"use strict";class c extends AudioWorkletProcessor{constructor(t){super()}static get parameterDescriptors(){return[{name:"choices",defaultValue:1,minValue:1,maxValue:32}]}process(t,s,o){for(let e=0;e<s[0].length;e++)for(let r=0;r<s[0][e].length;r++)s[0][e][r]=t[o.choices[0]-1][e][r];return!0}}registerProcessor("selector",c)})();

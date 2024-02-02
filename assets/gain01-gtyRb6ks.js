@@ -1,0 +1,1 @@
+(function(){"use strict";class a extends AudioWorkletProcessor{constructor(t){super()}static get parameterDescriptors(){return[{name:"gain",defaultValue:0,minValue:0,maxValue:1}]}process(t,n,o){for(let e=0;e<n.length;e++)for(let r=0;r<n[e].length;r++)for(let s=0;s<n[e][r].length;s++)n[e][r][s]=t[e][r][s]*o.gain[0];return!0}}registerProcessor("gain01",a)})();
